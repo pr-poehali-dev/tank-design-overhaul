@@ -4,59 +4,110 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import CrewMemberCard from '@/components/CrewMemberCard';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const Index = () => {
-  const [inputMode, setInputMode] = useState<'manual' | 'stats'>('manual');
-  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [selectedNation, setSelectedNation] = useState('USSR');
+  const [selectedType, setSelectedType] = useState('heavyTank');
+  const [selectedLevel, setSelectedLevel] = useState(10);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const fieldModNodes = [
-    { id: '1', name: 'Увеличенный БК', level: 1, maxLevel: 2, stats: '+3% к урону', x: 50, y: 10, category: 'firepower' },
-    { id: '2', name: 'Улучшенная броня', level: 0, maxLevel: 2, stats: '+5% к броне корпуса', x: 25, y: 28, category: 'armor' },
-    { id: '3', name: 'Усиленный двигатель', level: 1, maxLevel: 2, stats: '+8% к скорости', x: 75, y: 28, category: 'mobility' },
-    { id: '4', name: 'Точная наводка', level: 0, maxLevel: 2, stats: '-10% к разбросу', x: 15, y: 46, category: 'firepower' },
-    { id: '5', name: 'Усиленная башня', level: 0, maxLevel: 2, stats: '+7% к броне башни', x: 35, y: 46, category: 'armor' },
-    { id: '6', name: 'Улучшенная подвеска', level: 0, maxLevel: 2, stats: '+12% к маневренности', x: 65, y: 46, category: 'mobility' },
-    { id: '7', name: 'Оптика командира', level: 0, maxLevel: 2, stats: '+10% к обзору', x: 85, y: 46, category: 'vision' },
-    { id: '8', name: 'Скорострельность', level: 0, maxLevel: 2, stats: '-8% к перезарядке', x: 10, y: 64, category: 'firepower' },
-    { id: '9', name: 'Модуль ремонта', level: 0, maxLevel: 2, stats: '+15% к ремонту', x: 30, y: 64, category: 'armor' },
-    { id: '10', name: 'Турбина', level: 0, maxLevel: 2, stats: '+15% к мощности', x: 50, y: 64, category: 'mobility' },
-    { id: '11', name: 'Радиостанция', level: 0, maxLevel: 2, stats: '+12% к связи', x: 70, y: 64, category: 'vision' },
-    { id: '12', name: 'Стабилизатор', level: 0, maxLevel: 2, stats: '+6% к точности', x: 90, y: 64, category: 'firepower' },
-    { id: '13', name: 'Реактивная броня', level: 0, maxLevel: 2, stats: '+10% защита от кумулятивов', x: 20, y: 82, category: 'armor' },
-    { id: '14', name: 'Гусеницы премиум', level: 0, maxLevel: 2, stats: '+10% к проходимости', x: 50, y: 82, category: 'mobility' },
-    { id: '15', name: 'Усиленная оптика', level: 0, maxLevel: 2, stats: '+15% к дальности обзора', x: 80, y: 82, category: 'vision' },
+  const nations = [
+    { id: 'USSR', name: 'СССР', flag: '🇷🇺' },
+    { id: 'Germany', name: 'Германия', flag: '🇩🇪' },
+    { id: 'USA', name: 'США', flag: '🇺🇸' },
+    { id: 'China', name: 'Китай', flag: '🇨🇳' },
+    { id: 'France', name: 'Франция', flag: '🇫🇷' },
+    { id: 'UK', name: 'Великобритания', flag: '🇬🇧' },
   ];
 
-  const allSkills = {
-    commander: ['Шестое чувство', 'Эксперт', 'Орлиный глаз', 'Мастер на все руки', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
-    gunner: ['Плавный поворот башни', 'Снайпер', 'Злопамятный', 'Мастер-оружейник', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
-    driver: ['Король бездорожья', 'Плавный ход', 'Виртуоз', 'Чистота и порядок', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
-    loader: ['Бесконтактная боеукладка', 'Отчаянный', 'Интуиция', 'Аккуратность', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
-  };
-
-  const crewMembers = [
-    { role: 'Командир', skills: ['Шестое чувство', 'Ремонт', 'Маскировка'], level: 100, image: '👨‍✈️', availableSkills: allSkills.commander },
-    { role: 'Наводчик', skills: ['Плавный поворот башни', 'Ремонт', 'Снайпер'], level: 95, image: '🎯', availableSkills: allSkills.gunner },
-    { role: 'Механик-водитель', skills: ['Король бездорожья', 'Ремонт', 'Плавный ход'], level: 98, image: '🚗', availableSkills: allSkills.driver },
-    { role: 'Заряжающий', skills: ['Бесконтактная боеукладка', 'Ремонт', 'Отчаянный'], level: 92, image: '⚡', availableSkills: allSkills.loader },
+  const types = [
+    { id: 'lightTank', name: 'ЛТ', icon: 'Zap' },
+    { id: 'mediumTank', name: 'СТ', icon: 'Circle' },
+    { id: 'heavyTank', name: 'ТТ', icon: 'Shield' },
+    { id: 'AT-SPG', name: 'ПТ', icon: 'Target' },
+    { id: 'SPG', name: 'САУ', icon: 'Crosshair' },
   ];
 
-  const tankStats = {
-    firepower: 85,
-    armor: 92,
-    mobility: 65,
-    vision: 78,
-  };
+  const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  const toggleNode = (nodeId: string) => {
-    setSelectedNodes(prev =>
-      prev.includes(nodeId) ? prev.filter(id => id !== nodeId) : [...prev, nodeId]
-    );
-  };
+  const fieldModData = [
+    {
+      category: 'Огневая мощь',
+      slots: [
+        { level: 1, name: 'Увеличенный БК', bonus: '+3% урон', selected: true },
+        { level: 2, name: 'Скорострельность', bonus: '-8% перезарядка', selected: false },
+        { level: 3, name: 'Точная наводка', bonus: '-10% разброс', selected: true },
+        { level: 4, name: 'Стабилизатор', bonus: '+6% точность', selected: false },
+        { level: 5, name: 'Бронепробитие', bonus: '+5% пробитие', selected: false },
+      ]
+    },
+    {
+      category: 'Выживаемость',
+      slots: [
+        { level: 1, name: 'Улучшенная броня корпуса', bonus: '+5% броня', selected: false },
+        { level: 2, name: 'Усиленная башня', bonus: '+7% броня башни', selected: true },
+        { level: 3, name: 'Модуль ремонта', bonus: '+15% ремонт', selected: false },
+        { level: 4, name: 'Реактивная броня', bonus: '+10% от кумулятивов', selected: false },
+        { level: 5, name: 'Укрепленные модули', bonus: '+20% прочность', selected: true },
+      ]
+    },
+    {
+      category: 'Подвижность',
+      slots: [
+        { level: 1, name: 'Усиленный двигатель', bonus: '+8% скорость', selected: true },
+        { level: 2, name: 'Улучшенная подвеска', bonus: '+12% маневр', selected: false },
+        { level: 3, name: 'Турбина', bonus: '+15% мощность', selected: false },
+        { level: 4, name: 'Гусеницы премиум', bonus: '+10% проходимость', selected: true },
+        { level: 5, name: 'Разгонный блок', bonus: '+18% разгон', selected: false },
+      ]
+    },
+    {
+      category: 'Разведка',
+      slots: [
+        { level: 1, name: 'Оптика командира', bonus: '+10% обзор', selected: false },
+        { level: 2, name: 'Радиостанция', bonus: '+12% связь', selected: true },
+        { level: 3, name: 'Усиленная оптика', bonus: '+15% дальность', selected: false },
+        { level: 4, name: 'Система наведения', bonus: '+8% обнаружение', selected: false },
+        { level: 5, name: 'Командирская башня', bonus: '+20% обзор в движении', selected: true },
+      ]
+    },
+  ];
+
+  const tankCharacteristics = [
+    { param: 'Прочность', base: 2400, modified: 2640, bonus: '+240' },
+    { param: 'Урон в минуту', base: 2850, modified: 3135, bonus: '+285' },
+    { param: 'Средний урон', base: 440, modified: 440, bonus: '0' },
+    { param: 'Пробитие', base: 268, modified: 281, bonus: '+13' },
+    { param: 'Скорострельность', base: 6.48, modified: 7.12, bonus: '+0.64' },
+    { param: 'Время перезарядки', base: 9.26, modified: 8.43, bonus: '-0.83' },
+    { param: 'Разброс на 100м', base: 0.38, modified: 0.34, bonus: '-0.04' },
+    { param: 'Время сведения', base: 2.21, modified: 2.08, bonus: '-0.13' },
+  ];
+
+  const armorData = [
+    { zone: 'Лоб корпуса', base: 220, modified: 231, bonus: '+11' },
+    { zone: 'Борт корпуса', base: 150, modified: 158, bonus: '+8' },
+    { zone: 'Корма корпуса', base: 100, modified: 105, bonus: '+5' },
+    { zone: 'Лоб башни', base: 280, modified: 300, bonus: '+20' },
+    { zone: 'Борт башни', base: 180, modified: 193, bonus: '+13' },
+    { zone: 'Корма башни', base: 120, modified: 126, bonus: '+6' },
+  ];
+
+  const mobilityData = [
+    { param: 'Макс. скорость', base: 50, modified: 54, bonus: '+4' },
+    { param: 'Скорость назад', base: 15, modified: 16, bonus: '+1' },
+    { param: 'Удельная мощность', base: 15.2, modified: 17.5, bonus: '+2.3' },
+    { param: 'Скорость поворота', base: 26, modified: 29, bonus: '+3' },
+  ];
 
   return (
     <div className="min-h-screen bg-[#0f1419]">
@@ -77,196 +128,242 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-secondary via-primary to-destructive flex items-center justify-center text-4xl shadow-lg">
-              🛡️
-            </div>
+      <main className="container mx-auto px-8 py-6">
+        <Card className="p-6 mb-6 bg-card border-border">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Icon name="Filter" size={20} className="text-primary" />
+            Фильтры
+          </h2>
+          
+          <div className="space-y-4">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-1">Object 279 (e)</h1>
-              <div className="flex gap-2">
-                <Badge variant="secondary">X уровень</Badge>
-                <Badge variant="outline" className="border-destructive text-destructive">СССР</Badge>
-                <Badge variant="outline">ТТ</Badge>
+              <div className="text-sm text-muted-foreground mb-2">Нация</div>
+              <div className="flex flex-wrap gap-2">
+                {nations.map(nation => (
+                  <Button
+                    key={nation.id}
+                    variant={selectedNation === nation.id ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedNation(nation.id)}
+                  >
+                    <span className="mr-2">{nation.flag}</span>
+                    {nation.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm text-muted-foreground mb-2">Тип техники</div>
+              <div className="flex flex-wrap gap-2">
+                {types.map(type => (
+                  <Button
+                    key={type.id}
+                    variant={selectedType === type.id ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedType(type.id)}
+                  >
+                    <Icon name={type.icon as any} size={16} className="mr-2" />
+                    {type.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm text-muted-foreground mb-2">Уровень</div>
+              <div className="flex flex-wrap gap-2">
+                {levels.map(level => (
+                  <Button
+                    key={level}
+                    variant={selectedLevel === level ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedLevel(level)}
+                    className="w-12"
+                  >
+                    {level}
+                  </Button>
+                ))}
               </div>
             </div>
           </div>
+        </Card>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-card px-4 py-2 rounded-lg">
-              <Label htmlFor="mode-switch" className="text-sm">
-                {inputMode === 'manual' ? '✏️ Ручной ввод' : '📊 Статистика'}
-              </Label>
-              <Switch
-                id="mode-switch"
-                checked={inputMode === 'stats'}
-                onCheckedChange={(checked) => setInputMode(checked ? 'stats' : 'manual')}
-              />
+        <div className="mb-6">
+          <Card className="p-6 bg-card border-border">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-secondary via-primary to-destructive flex items-center justify-center text-3xl shadow-lg">
+                🛡️
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-1">Object 279 (e)</h1>
+                <div className="flex gap-2">
+                  <Badge variant="secondary">X уровень</Badge>
+                  <Badge variant="outline" className="border-destructive text-destructive">СССР</Badge>
+                  <Badge variant="outline">ТТ</Badge>
+                </div>
+              </div>
             </div>
-          </div>
+
+            <div className="grid grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-muted/20 rounded-lg">
+                <div className="text-2xl font-bold text-destructive">85</div>
+                <div className="text-xs text-muted-foreground">Огневая мощь</div>
+              </div>
+              <div className="text-center p-4 bg-muted/20 rounded-lg">
+                <div className="text-2xl font-bold text-primary">92</div>
+                <div className="text-xs text-muted-foreground">Бронирование</div>
+              </div>
+              <div className="text-center p-4 bg-muted/20 rounded-lg">
+                <div className="text-2xl font-bold text-secondary">65</div>
+                <div className="text-xs text-muted-foreground">Подвижность</div>
+              </div>
+              <div className="text-center p-4 bg-muted/20 rounded-lg">
+                <div className="text-2xl font-bold text-accent">78</div>
+                <div className="text-xs text-muted-foreground">Обзор</div>
+              </div>
+            </div>
+          </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="p-6 bg-card border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <Icon name="Zap" className="text-secondary" size={24} />
-                <h2 className="text-xl font-bold">Полевая модернизация</h2>
-              </div>
+        <Card className="p-6 bg-card border-border mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Icon name="Zap" className="text-secondary" size={24} />
+              Полевая модернизация
+            </h2>
+            <div className="text-sm text-muted-foreground">
+              Очков использовано: <span className="text-secondary font-bold">8/12</span>
+            </div>
+          </div>
 
-              <div className="relative h-[500px] bg-muted/20 rounded-lg border border-border/50 p-8 overflow-hidden">
-                <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                  <line x1="50%" y1="10%" x2="25%" y2="28%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="50%" y1="10%" x2="75%" y2="28%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="25%" y1="28%" x2="15%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="25%" y1="28%" x2="35%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="75%" y1="28%" x2="65%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="75%" y1="28%" x2="85%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="15%" y1="46%" x2="10%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="15%" y1="46%" x2="30%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="35%" y1="46%" x2="30%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="65%" y1="46%" x2="50%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="65%" y1="46%" x2="70%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="85%" y1="46%" x2="70%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="85%" y1="46%" x2="90%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="30%" y1="64%" x2="20%" y2="82%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="50%" y1="64%" x2="50%" y2="82%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="70%" y1="64%" x2="80%" y2="82%" stroke="#3b3b4a" strokeWidth="2" />
-                </svg>
+          <Tabs defaultValue={fieldModData[0].category} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+              {fieldModData.map(cat => (
+                <TabsTrigger key={cat.category} value={cat.category}>
+                  {cat.category}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-                {fieldModNodes.map(node => (
-                  <button
-                    key={node.id}
-                    onClick={() => toggleNode(node.id)}
-                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 hover:scale-110 ${
-                      selectedNodes.includes(node.id) ? 'z-20' : 'z-10'
-                    }`}
-                    style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                  >
-                    <div className={`w-28 p-2.5 rounded-lg border-2 text-center transition-all ${
-                      selectedNodes.includes(node.id)
-                        ? 'bg-primary border-primary shadow-lg shadow-primary/50'
-                        : node.level > 0
-                        ? 'bg-secondary/20 border-secondary'
-                        : 'bg-card border-border hover:border-primary/50'
-                    }`}>
-                      <div className="text-[10px] font-bold mb-1 leading-tight">{node.name}</div>
-                      <div className="text-[9px] text-muted-foreground leading-tight">{node.stats}</div>
-                      <div className="text-[9px] font-semibold mt-1 text-primary">
-                        {node.level}/{node.maxLevel}
+            {fieldModData.map(category => (
+              <TabsContent key={category.category} value={category.category}>
+                <div className="space-y-3">
+                  {category.slots.map((slot, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
+                        slot.selected
+                          ? 'bg-primary/20 border-primary'
+                          : 'bg-muted/20 border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center font-bold text-sm">
+                          {slot.level}
+                        </div>
+                        <div>
+                          <div className="font-semibold">{slot.name}</div>
+                          <div className="text-sm text-muted-foreground">{slot.bonus}</div>
+                        </div>
+                      </div>
+                      <div>
+                        {slot.selected && (
+                          <Badge variant="default" className="bg-primary">
+                            <Icon name="CheckCircle2" size={14} className="mr-1" />
+                            Выбрано
+                          </Badge>
+                        )}
                       </div>
                     </div>
-                  </button>
+                  ))}
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </Card>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="p-6 bg-card border-border">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Icon name="Target" className="text-destructive" size={20} />
+              Характеристики орудия
+            </h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Параметр</TableHead>
+                  <TableHead className="text-right">Базовое</TableHead>
+                  <TableHead className="text-right">С модами</TableHead>
+                  <TableHead className="text-right text-primary">Бонус</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tankCharacteristics.map((char, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-medium">{char.param}</TableCell>
+                    <TableCell className="text-right text-muted-foreground">{char.base}</TableCell>
+                    <TableCell className="text-right font-semibold">{char.modified}</TableCell>
+                    <TableCell className="text-right text-primary font-semibold">{char.bonus}</TableCell>
+                  </TableRow>
                 ))}
-              </div>
+              </TableBody>
+            </Table>
+          </Card>
 
-              <div className="mt-4 flex justify-between items-center">
-                <div className="text-sm text-muted-foreground">
-                  Доступно очков: <span className="text-secondary font-bold">3</span>
-                </div>
-                <Button size="sm" className="bg-primary hover:bg-primary/90">
-                  <Icon name="Save" size={16} className="mr-2" />
-                  Сохранить конфигурацию
-                </Button>
-              </div>
-            </Card>
-
-            <Card className="p-6 bg-card border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <Icon name="Activity" className="text-secondary" size={24} />
-                <h2 className="text-xl font-bold">Характеристики танка</h2>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm flex items-center gap-2">
-                      <Icon name="Target" size={16} className="text-destructive" />
-                      Огневая мощь
-                    </span>
-                    <span className="text-sm font-bold text-foreground">{tankStats.firepower}%</span>
-                  </div>
-                  <Progress value={tankStats.firepower} className="h-2" />
-                </div>
-
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm flex items-center gap-2">
-                      <Icon name="Shield" size={16} className="text-primary" />
-                      Бронирование
-                    </span>
-                    <span className="text-sm font-bold text-foreground">{tankStats.armor}%</span>
-                  </div>
-                  <Progress value={tankStats.armor} className="h-2" />
-                </div>
-
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm flex items-center gap-2">
-                      <Icon name="Gauge" size={16} className="text-secondary" />
-                      Подвижность
-                    </span>
-                    <span className="text-sm font-bold text-foreground">{tankStats.mobility}%</span>
-                  </div>
-                  <Progress value={tankStats.mobility} className="h-2" />
-                </div>
-
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm flex items-center gap-2">
-                      <Icon name="Eye" size={16} className="text-accent" />
-                      Обзор
-                    </span>
-                    <span className="text-sm font-bold text-foreground">{tankStats.vision}%</span>
-                  </div>
-                  <Progress value={tankStats.vision} className="h-2" />
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card className="p-6 bg-card border-border">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <Icon name="Users" className="text-secondary" size={24} />
-                  <h2 className="text-xl font-bold">Экипаж</h2>
-                </div>
-                <Button size="sm" variant="outline">
-                  <Icon name="Settings" size={16} />
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                {crewMembers.map((member, idx) => (
-                  <CrewMemberCard
-                    key={idx}
-                    role={member.role}
-                    skills={member.skills}
-                    level={member.level}
-                    image={member.image}
-                    availableSkills={member.availableSkills}
-                  />
+          <Card className="p-6 bg-card border-border">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Icon name="Shield" className="text-primary" size={20} />
+              Бронирование
+            </h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Зона</TableHead>
+                  <TableHead className="text-right">Базовое</TableHead>
+                  <TableHead className="text-right">С модами</TableHead>
+                  <TableHead className="text-right text-primary">Бонус</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {armorData.map((armor, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-medium">{armor.zone}</TableCell>
+                    <TableCell className="text-right text-muted-foreground">{armor.base}</TableCell>
+                    <TableCell className="text-right font-semibold">{armor.modified}</TableCell>
+                    <TableCell className="text-right text-primary font-semibold">{armor.bonus}</TableCell>
+                  </TableRow>
                 ))}
-              </div>
+              </TableBody>
+            </Table>
+          </Card>
 
-              <Button className="w-full mt-4 bg-primary hover:bg-primary/90">
-                <Icon name="UserPlus" size={16} className="mr-2" />
-                Переобучить экипаж
-              </Button>
-            </Card>
-
-            <Card className="p-6 bg-card border-border">
-              <div className="flex items-center gap-2 mb-4">
-                <Icon name="BookOpen" className="text-secondary" size={20} />
-                <h3 className="font-bold">Подсказка</h3>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Полевая модернизация позволяет улучшить ключевые характеристики танка. Выбирайте узлы в дереве развития, чтобы повысить огневую мощь, броню или подвижность.
-              </p>
-            </Card>
-          </div>
+          <Card className="p-6 bg-card border-border lg:col-span-2">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Icon name="Gauge" className="text-secondary" size={20} />
+              Подвижность
+            </h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Параметр</TableHead>
+                  <TableHead className="text-right">Базовое</TableHead>
+                  <TableHead className="text-right">С модами</TableHead>
+                  <TableHead className="text-right text-primary">Бонус</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mobilityData.map((mob, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-medium">{mob.param}</TableCell>
+                    <TableCell className="text-right text-muted-foreground">{mob.base}</TableCell>
+                    <TableCell className="text-right font-semibold">{mob.modified}</TableCell>
+                    <TableCell className="text-right text-primary font-semibold">{mob.bonus}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
         </div>
       </main>
     </div>
