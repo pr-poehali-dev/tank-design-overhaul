@@ -7,25 +7,42 @@ import Icon from '@/components/ui/icon';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import CrewMemberCard from '@/components/CrewMemberCard';
 
 const Index = () => {
   const [inputMode, setInputMode] = useState<'manual' | 'stats'>('manual');
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
   const fieldModNodes = [
-    { id: '1', name: 'Увеличенный БК', level: 1, maxLevel: 2, stats: '+3% к урону', x: 50, y: 20 },
-    { id: '2', name: 'Улучшенная броня', level: 0, maxLevel: 2, stats: '+5% к броне', x: 30, y: 40 },
-    { id: '3', name: 'Усиленный двигатель', level: 1, maxLevel: 2, stats: '+8% к скорости', x: 70, y: 40 },
-    { id: '4', name: 'Точная наводка', level: 0, maxLevel: 2, stats: '-10% к разбросу', x: 20, y: 60 },
-    { id: '5', name: 'Модуль ремонта', level: 0, maxLevel: 2, stats: '+15% к ремонту', x: 50, y: 60 },
-    { id: '6', name: 'Оптика командира', level: 0, maxLevel: 2, stats: '+10% к обзору', x: 80, y: 60 },
+    { id: '1', name: 'Увеличенный БК', level: 1, maxLevel: 2, stats: '+3% к урону', x: 50, y: 10, category: 'firepower' },
+    { id: '2', name: 'Улучшенная броня', level: 0, maxLevel: 2, stats: '+5% к броне корпуса', x: 25, y: 28, category: 'armor' },
+    { id: '3', name: 'Усиленный двигатель', level: 1, maxLevel: 2, stats: '+8% к скорости', x: 75, y: 28, category: 'mobility' },
+    { id: '4', name: 'Точная наводка', level: 0, maxLevel: 2, stats: '-10% к разбросу', x: 15, y: 46, category: 'firepower' },
+    { id: '5', name: 'Усиленная башня', level: 0, maxLevel: 2, stats: '+7% к броне башни', x: 35, y: 46, category: 'armor' },
+    { id: '6', name: 'Улучшенная подвеска', level: 0, maxLevel: 2, stats: '+12% к маневренности', x: 65, y: 46, category: 'mobility' },
+    { id: '7', name: 'Оптика командира', level: 0, maxLevel: 2, stats: '+10% к обзору', x: 85, y: 46, category: 'vision' },
+    { id: '8', name: 'Скорострельность', level: 0, maxLevel: 2, stats: '-8% к перезарядке', x: 10, y: 64, category: 'firepower' },
+    { id: '9', name: 'Модуль ремонта', level: 0, maxLevel: 2, stats: '+15% к ремонту', x: 30, y: 64, category: 'armor' },
+    { id: '10', name: 'Турбина', level: 0, maxLevel: 2, stats: '+15% к мощности', x: 50, y: 64, category: 'mobility' },
+    { id: '11', name: 'Радиостанция', level: 0, maxLevel: 2, stats: '+12% к связи', x: 70, y: 64, category: 'vision' },
+    { id: '12', name: 'Стабилизатор', level: 0, maxLevel: 2, stats: '+6% к точности', x: 90, y: 64, category: 'firepower' },
+    { id: '13', name: 'Реактивная броня', level: 0, maxLevel: 2, stats: '+10% защита от кумулятивов', x: 20, y: 82, category: 'armor' },
+    { id: '14', name: 'Гусеницы премиум', level: 0, maxLevel: 2, stats: '+10% к проходимости', x: 50, y: 82, category: 'mobility' },
+    { id: '15', name: 'Усиленная оптика', level: 0, maxLevel: 2, stats: '+15% к дальности обзора', x: 80, y: 82, category: 'vision' },
   ];
 
+  const allSkills = {
+    commander: ['Шестое чувство', 'Эксперт', 'Орлиный глаз', 'Мастер на все руки', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
+    gunner: ['Плавный поворот башни', 'Снайпер', 'Злопамятный', 'Мастер-оружейник', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
+    driver: ['Король бездорожья', 'Плавный ход', 'Виртуоз', 'Чистота и порядок', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
+    loader: ['Бесконтактная боеукладка', 'Отчаянный', 'Интуиция', 'Аккуратность', 'Боевое братство', 'Ремонт', 'Маскировка', 'Пожаротушение'],
+  };
+
   const crewMembers = [
-    { role: 'Командир', skills: ['Шестое чувство', 'Ремонт', 'Маскировка'], level: 100, image: '👨‍✈️' },
-    { role: 'Наводчик', skills: ['Плавный поворот башни', 'Ремонт', 'Снайпер'], level: 95, image: '🎯' },
-    { role: 'Механик-водитель', skills: ['Король бездорожья', 'Ремонт', 'Плавный ход'], level: 98, image: '🚗' },
-    { role: 'Заряжающий', skills: ['Бесконтактная боеукладка', 'Ремонт', 'Отчаянный'], level: 92, image: '⚡' },
+    { role: 'Командир', skills: ['Шестое чувство', 'Ремонт', 'Маскировка'], level: 100, image: '👨‍✈️', availableSkills: allSkills.commander },
+    { role: 'Наводчик', skills: ['Плавный поворот башни', 'Ремонт', 'Снайпер'], level: 95, image: '🎯', availableSkills: allSkills.gunner },
+    { role: 'Механик-водитель', skills: ['Король бездорожья', 'Ремонт', 'Плавный ход'], level: 98, image: '🚗', availableSkills: allSkills.driver },
+    { role: 'Заряжающий', skills: ['Бесконтактная боеукладка', 'Ремонт', 'Отчаянный'], level: 92, image: '⚡', availableSkills: allSkills.loader },
   ];
 
   const tankStats = {
@@ -98,14 +115,24 @@ const Index = () => {
                 <h2 className="text-xl font-bold">Полевая модернизация</h2>
               </div>
 
-              <div className="relative h-[400px] bg-muted/20 rounded-lg border border-border/50 p-8">
+              <div className="relative h-[500px] bg-muted/20 rounded-lg border border-border/50 p-8 overflow-hidden">
                 <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                  <line x1="50%" y1="20%" x2="30%" y2="40%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="50%" y1="20%" x2="70%" y2="40%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="30%" y1="40%" x2="20%" y2="60%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="30%" y1="40%" x2="50%" y2="60%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="70%" y1="40%" x2="50%" y2="60%" stroke="#3b3b4a" strokeWidth="2" />
-                  <line x1="70%" y1="40%" x2="80%" y2="60%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="50%" y1="10%" x2="25%" y2="28%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="50%" y1="10%" x2="75%" y2="28%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="25%" y1="28%" x2="15%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="25%" y1="28%" x2="35%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="75%" y1="28%" x2="65%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="75%" y1="28%" x2="85%" y2="46%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="15%" y1="46%" x2="10%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="15%" y1="46%" x2="30%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="35%" y1="46%" x2="30%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="65%" y1="46%" x2="50%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="65%" y1="46%" x2="70%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="85%" y1="46%" x2="70%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="85%" y1="46%" x2="90%" y2="64%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="30%" y1="64%" x2="20%" y2="82%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="50%" y1="64%" x2="50%" y2="82%" stroke="#3b3b4a" strokeWidth="2" />
+                  <line x1="70%" y1="64%" x2="80%" y2="82%" stroke="#3b3b4a" strokeWidth="2" />
                 </svg>
 
                 {fieldModNodes.map(node => (
@@ -117,16 +144,16 @@ const Index = () => {
                     }`}
                     style={{ left: `${node.x}%`, top: `${node.y}%` }}
                   >
-                    <div className={`w-32 p-3 rounded-lg border-2 text-center transition-all ${
+                    <div className={`w-28 p-2.5 rounded-lg border-2 text-center transition-all ${
                       selectedNodes.includes(node.id)
                         ? 'bg-primary border-primary shadow-lg shadow-primary/50'
                         : node.level > 0
                         ? 'bg-secondary/20 border-secondary'
                         : 'bg-card border-border hover:border-primary/50'
                     }`}>
-                      <div className="text-xs font-bold mb-1">{node.name}</div>
-                      <div className="text-[10px] text-muted-foreground">{node.stats}</div>
-                      <div className="text-[10px] font-semibold mt-1 text-primary">
+                      <div className="text-[10px] font-bold mb-1 leading-tight">{node.name}</div>
+                      <div className="text-[9px] text-muted-foreground leading-tight">{node.stats}</div>
+                      <div className="text-[9px] font-semibold mt-1 text-primary">
                         {node.level}/{node.maxLevel}
                       </div>
                     </div>
@@ -213,26 +240,14 @@ const Index = () => {
 
               <div className="space-y-4">
                 {crewMembers.map((member, idx) => (
-                  <div key={idx} className="p-4 bg-muted/20 rounded-lg border border-border/50 hover:border-primary/50 transition-all">
-                    <div className="flex items-start gap-3">
-                      <div className="text-3xl">{member.image}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-sm">{member.role}</h3>
-                          <Badge variant="secondary" className="text-xs">{member.level}%</Badge>
-                        </div>
-                        <Progress value={member.level} className="h-1 mb-3" />
-                        <div className="space-y-1">
-                          {member.skills.map((skill, skillIdx) => (
-                            <div key={skillIdx} className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <Icon name="CheckCircle2" size={12} className="text-primary" />
-                              {skill}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <CrewMemberCard
+                    key={idx}
+                    role={member.role}
+                    skills={member.skills}
+                    level={member.level}
+                    image={member.image}
+                    availableSkills={member.availableSkills}
+                  />
                 ))}
               </div>
 
